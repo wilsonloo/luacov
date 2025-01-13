@@ -1,7 +1,7 @@
 package = "luacov"
 version = "scm-1"
 source = {
-   url = "git+https://github.com/lunarmodules/luacov.git",
+   url = "git+ssh://git@10.100.70.200:mu/server/luacov.git",
 }
 description = {
    summary = "Coverage analysis tool for Lua scripts",
@@ -13,7 +13,7 @@ processes this file generating a report indicating which code
 paths were not traversed, which is useful for verifying the
 effectiveness of a test suite.
    ]],
-   homepage = "https://lunarmodules.github.io/luacov/",
+   homepage = "http://10.100.70.200:9529/mu/server/luacov.git",
    license = "MIT"
 }
 dependencies = {
