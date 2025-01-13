@@ -27,6 +27,11 @@ Options:
 
       Use a custom reporter - a module in luacov.reporter.* namespace.
 
+   -R reportfile, --reportfile reportfile
+
+      Write the report to the specified file. By default it is
+      luacov.report.out
+
    -h, --help
 
       Show this help message and exit.
@@ -66,6 +71,7 @@ local function norm_pat(p)
    return (p:gsub("\\", "/"):gsub("%.lua$", ""))
 end
 
+local reportfile
 local i = 1
 while arg[i] do
    local key, value
@@ -78,6 +84,8 @@ while arg[i] do
          configfile = value
       elseif (key == "r") or (key == "reporter") then
          reporter = value
+      elseif (key == "R") or (key == "reportfile") then
+         reportfile = value
       end
    else
       table.insert(patterns, norm_pat(value))
@@ -96,4 +104,6 @@ for _, patt in ipairs(patterns) do
 end
 
 configuration.reporter = reporter or configuration.reporter
+configuration.reportfile = reportfile or configuration.reportfile
+
 runner.run_report(configuration)

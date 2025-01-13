@@ -6,7 +6,7 @@
 
 local runner = {}
 --- LuaCov version in `MAJOR.MINOR.PATCH` format.
-runner.version = "0.16.0"
+runner.version = "0.16.1"
 
 local stats = require("luacov.stats")
 local util = require("luacov.util")
@@ -20,7 +20,7 @@ local new_anchor = newproxy or function() return {} end -- luacheck: compat
 -- Returns an anchor that runs fn when collected.
 local function on_exit_wrap(fn)
    local anchor = new_anchor()
-   debug.setmetatable(anchor, {__gc = fn})
+   debug.setmetatable(anchor, { __gc = fn })
    return anchor
 end
 
@@ -60,7 +60,7 @@ function runner.file_included(filename)
    -- If include list is empty, everything is included by default.
    -- If exclude list is empty, nothing is excluded by default.
    return match_any(runner.configuration.include, filename, true) and
-      not match_any(runner.configuration.exclude, filename, false)
+       not match_any(runner.configuration.exclude, filename, false)
 end
 
 --------------------------------------------------
@@ -212,7 +212,7 @@ end
 -- them as runner.modules.patterns and runner.modules.filenames.
 -- Appends these patterns to the include list.
 local function acknowledge_modules()
-   runner.modules = {patterns = {}, filenames = {}}
+   runner.modules = { patterns = {}, filenames = {} }
 
    if not runner.configuration.modules then
       return
@@ -335,7 +335,7 @@ local function set_config(configuration)
    -- Convert path options to absolute paths to use correct paths anyway.
    local cur_dir
 
-   for _, option in ipairs({"statsfile", "reportfile"}) do
+   for _, option in ipairs({ "statsfile", "reportfile" }) do
       local path = runner.configuration[option]
 
       if not is_absolute(path) then
@@ -354,7 +354,7 @@ local function set_config(configuration)
 end
 
 local function load_config_file(name, is_default)
-   local conf = setmetatable({}, {__index = _G})
+   local conf = setmetatable({}, { __index = _G })
 
    local ok, ret, error_msg = util.load_config(name, conf)
 
@@ -600,13 +600,13 @@ end
 -- Escapes magic pattern characters, removes .lua extension
 -- and replaces dir seps by '/'.
 local function escapefilename(name)
-   return name:gsub("%.lua$", ""):gsub("[%%%^%$%.%(%)%[%]%+%*%-%?]","%%%0"):gsub("\\", "/")
+   return name:gsub("%.lua$", ""):gsub("[%%%^%$%.%(%)%[%]%+%*%-%?]", "%%%0"):gsub("\\", "/")
 end
 
 local function addfiletolist(name, list)
-  local f = "^"..escapefilename(getfilename(name)).."$"
-  table.insert(list, f)
-  return f
+   local f = "^" .. escapefilename(getfilename(name)) .. "$"
+   table.insert(list, f)
+   return f
 end
 
 local function addtreetolist(name, level, list)
@@ -617,8 +617,8 @@ local function addtreetolist(name, level, list)
       f = f:match("^(.*)/") or f
    end
 
-   local t = "^"..f.."/"   -- the tree behind the file
-   f = "^"..f.."$"         -- the file
+   local t = "^" .. f .. "/" -- the tree behind the file
+   f = "^" .. f .. "$"       -- the file
    table.insert(list, f)
    table.insert(list, t)
    return f, t
@@ -628,7 +628,7 @@ end
 -- and 'false' replaced with nil.
 local function checkresult(ok, ...)
    if ok then
-      return ... -- success, strip 'true' value
+      return ...      -- success, strip 'true' value
    else
       return nil, ... -- failure; nil + error
    end
@@ -648,15 +648,17 @@ end
 -- * table;    module table where containing file is looked up
 -- @return the pattern as added to the list, or nil + error
 function runner.excludefile(name)
-  return checkresult(pcall(addfiletolist, name, runner.configuration.exclude))
+   return checkresult(pcall(addfiletolist, name, runner.configuration.exclude))
 end
+
 -------------------------------------------------------------------
 -- Adds a file to the include list (see `luacov.defaults`).
 -- @param name see `excludefile`
 -- @return the pattern as added to the list, or nil + error
 function runner.includefile(name)
-  return checkresult(pcall(addfiletolist, name, runner.configuration.include))
+   return checkresult(pcall(addfiletolist, name, runner.configuration.include))
 end
+
 -------------------------------------------------------------------
 -- Adds a tree to the exclude list (see `luacov.defaults`).
 -- If `name = 'luacov'` and `level = nil` then
@@ -668,16 +670,16 @@ end
 -- @param level if truthy then one level up is added, including the tree
 -- @return the 2 patterns as added to the list (file and tree), or nil + error
 function runner.excludetree(name, level)
-  return checkresult(pcall(addtreetolist, name, level, runner.configuration.exclude))
+   return checkresult(pcall(addtreetolist, name, level, runner.configuration.exclude))
 end
+
 -------------------------------------------------------------------
 -- Adds a tree to the include list (see `luacov.defaults`).
 -- @param name see `excludefile`
 -- @param level see `includetree`
 -- @return the 2 patterns as added to the list (file and tree), or nil + error
 function runner.includetree(name, level)
-  return checkresult(pcall(addtreetolist, name, level, runner.configuration.include))
+   return checkresult(pcall(addtreetolist, name, level, runner.configuration.include))
 end
 
-
-return setmetatable(runner, {__call = function(_, configfile) runner.init(configfile) end})
+return setmetatable(runner, { __call = function(_, configfile) runner.init(configfile) end })
