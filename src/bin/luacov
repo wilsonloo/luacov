@@ -23,6 +23,10 @@ Options:
       Use a config file, .luacov by default. For details see
       luacov.defaults module.
 
+   -s statsfile, --statsfile statsfile
+
+      Use a custom stats file. By default it is luacov.stats.out
+
    -r name, --reporter name
 
       Use a custom reporter - a module in luacov.reporter.* namespace.
@@ -71,6 +75,7 @@ local function norm_pat(p)
    return (p:gsub("\\", "/"):gsub("%.lua$", ""))
 end
 
+local statsfile
 local reportfile
 local i = 1
 while arg[i] do
@@ -86,6 +91,11 @@ while arg[i] do
          reporter = value
       elseif (key == "R") or (key == "reportfile") then
          reportfile = value
+      elseif (key == "s") or (key == "statsfile") then
+         statsfile = value
+      else
+         io.stderr:write("Unknown option: -", key, "\n")
+         os.exit(1)
       end
    else
       table.insert(patterns, norm_pat(value))
@@ -103,6 +113,7 @@ for _, patt in ipairs(patterns) do
    table.insert(configuration.include, patt)
 end
 
+configuration.statsfile = statsfile or configuration.statsfile
 configuration.reporter = reporter or configuration.reporter
 configuration.reportfile = reportfile or configuration.reportfile
 
